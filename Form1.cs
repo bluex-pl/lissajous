@@ -183,11 +183,13 @@ namespace Lissajous {
             if(skip >= chart1.Series[0].Points.Count) {
                 chart1.Series[0].Points.Clear();
                 rewindButton.Enabled = false;
+                count = 0;
             }
             else {
                 for(int i = 0; i < skip; i++) {
                     chart1.Series[0].Points.RemoveAt(chart1.Series[0].Points.Count - 1);
                 }
+                count -= skip;
             }
         }
 
@@ -282,6 +284,11 @@ namespace Lissajous {
                     DataContractSerializer serializer = new DataContractSerializer(typeof(Settings));
                     try {
                         settings.copyFrom(serializer.ReadObject(stream) as Settings);
+                        propertyGrid1.Refresh();
+                    }
+                    catch (Exception ex){
+                        //toolStripStatusLabel1.Text = String.Format("Error during loading settings: {0}", ex.Message);
+                        toolStripStatusLabel1.Text = "Error during loading settings";
                     }
                     finally {
                         stream.Close();
