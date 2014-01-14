@@ -196,6 +196,7 @@
             this.skipTextBox.Size = new System.Drawing.Size(50, 25);
             this.skipTextBox.Text = "1";
             this.skipTextBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.skipTextBox.ToolTipText = "Number of steps";
             this.skipTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.skipTextBox_Validating);
             // 
             // forwardButton
