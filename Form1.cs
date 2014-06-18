@@ -38,7 +38,24 @@ namespace Lissajous {
             settings.chart = chart1;
             settings.timer = timer1;
             propertyGrid1.SelectedObject = settings;
+            prepareChart();
             prepareSpring();
+        }
+
+        private void keepAspect() {
+            ChartArea area = chart1.ChartAreas[0];
+            Size size = chart1.Size;
+            float ratio = (float)size.Width / (float)size.Height;
+            if(ratio < 1) {
+                area.Position.Width = 96;
+                area.Position.Height = ratio * 96;
+            }
+            else {
+                area.Position.Width = 96 / ratio;
+                area.Position.Height = 96;
+            }
+            area.Position.X = (96 - area.Position.Width) / 2 + 2;
+            area.Position.Y = (96 - area.Position.Height) / 2 + 2;
         }
 
         private void prepareSpring() {
@@ -60,26 +77,28 @@ namespace Lissajous {
         private void prepareChart() {
             Axis X = chart1.ChartAreas[0].Axes[0];
             Axis Y = chart1.ChartAreas[0].Axes[1];
+            double magnitude = Math.Max(settings.XMagnitude, settings.YMagnitude);
 
-            X.MinorTickMark.Interval = settings.XMagnitude / 10.0;
-            X.MajorTickMark.Interval = settings.XMagnitude / 2.0;
+            X.MinorTickMark.Interval = magnitude / 10.0;
+            X.MajorTickMark.Interval = magnitude / 2.0;
             X.MajorTickMark.IntervalOffset = X.MinorTickMark.Interval * settings.marginSize;
             X.MajorGrid.Interval = X.MajorTickMark.Interval;
             X.MajorGrid.IntervalOffset = X.MajorTickMark.IntervalOffset;
             X.LabelStyle.Interval = X.MajorTickMark.Interval;
             X.LabelStyle.IntervalOffset = X.MinorTickMark.Interval * settings.marginSize;
-            X.Maximum = settings.XMagnitude + X.MajorGrid.IntervalOffset;
+            X.Maximum = magnitude + X.MajorGrid.IntervalOffset;
             X.Minimum = -X.Maximum;
 
-            Y.MinorTickMark.Interval = settings.YMagnitude / 10.0;
-            Y.MajorTickMark.Interval = settings.YMagnitude / 2.0;
+            Y.MinorTickMark.Interval = magnitude / 10.0;
+            Y.MajorTickMark.Interval = magnitude / 2.0;
             Y.MajorTickMark.IntervalOffset = Y.MinorTickMark.Interval * settings.marginSize;
             Y.MajorGrid.Interval = Y.MajorTickMark.Interval;
             Y.MajorGrid.IntervalOffset = Y.MajorTickMark.IntervalOffset;
             Y.LabelStyle.Interval = Y.MajorTickMark.Interval;
             Y.LabelStyle.IntervalOffset = Y.MinorTickMark.Interval * settings.marginSize;
-            Y.Maximum = settings.YMagnitude + Y.MajorGrid.IntervalOffset;
+            Y.Maximum = magnitude + Y.MajorGrid.IntervalOffset;
             Y.Minimum = -Y.Maximum;
+            keepAspect();
         }
 
         private PointF[] drawSpring(double X, double Y, double dX, double dY, Axis aX, Axis aY) {
@@ -287,14 +306,22 @@ namespace Lissajous {
                         propertyGrid1.Refresh();
                     }
                     catch (Exception ex){
-                        //toolStripStatusLabel1.Text = String.Format("Error during loading settings: {0}", ex.Message);
-                        toolStripStatusLabel1.Text = "Error during loading settings";
+                        //toolStripStatusLabel1.Text = String.Format("Error while loading settings: {0}", ex.Message);
+                        toolStripStatusLabel1.Text = "Error while loading settings";
                     }
                     finally {
                         stream.Close();
                     }
                 }
             }
+        }
+
+        private void chart1_Resize(object sender, EventArgs e) {
+            keepAspect();
+        }
+
+        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e) {
+            prepareChart();
         }
     }
 }

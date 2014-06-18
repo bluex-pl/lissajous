@@ -24,7 +24,7 @@ namespace Lissajous {
         public Settings() {
             chart = null;
             timer = null;
-            marginSize = 3;
+            marginSize = 1;
             XFrequency = 3.0;
             YFrequency = 4.0;
             XMagnitude = YMagnitude = 1.0;
